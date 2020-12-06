@@ -30,7 +30,7 @@ const LinkCenter = styled(Link)({
 })
 
 const ButtonBig = styled(Button)({
-    height: '56px',
+    height: '50px',
     fontSize: '1.1rem'
 })
 
@@ -43,7 +43,7 @@ const Signup = () => {
                     <TextField label="Email" variant="filled" type="email" />
                     <TextField label="Password" variant="filled" type="password" />
                     <TextFieldMargin label="Password" variant="filled" type="password" />
-                    <ButtonBig variant="outlined" color="primary">Sign In</ButtonBig>
+                    <ButtonBig variant="outlined" color="primary">Sign Up</ButtonBig>
                 </form>
                 <LinkCenter to="/login">Already have an account?</LinkCenter>
             </CenterContainer>
