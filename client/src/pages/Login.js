@@ -32,11 +32,6 @@ const LinkCenter = styled(Link)({
     textAlign: 'center',
 })
 
-const ButtonBig = styled(Button)({
-    height: '50px',
-    fontSize: '1.1rem'
-})
-
 const AlertMessage = styled(Alert)({
     marginTop: '1rem',
     marginBottom: '1rem'
@@ -46,10 +41,11 @@ const Login = () => {
     const [isLoggedIn, setIsLoggedIn] = useState(false)
     const [isError, setIsError] = useState(false)
     const [userName, setUserName] = useState("")
-    const [password, setPassword] = useState()
+    const [password, setPassword] = useState("")
     const { setAuthTokens } = useAuth()
 
-    const postLogin = () => {
+    const postLogin = (event) => {
+        event.preventDefault()
         axios.post("http://localhost:1337/auth/local", {
             userName,
             password
@@ -72,10 +68,14 @@ const Login = () => {
         <Box>
         <CenterContainer maxWidth="xs">
             <Logo />
-            <form>
-                <TextField label="Email" variant="filled" type="email" />
-                <TextFieldMargin label="Password" variant="filled" type="password" />
-                <ButtonBig variant="outlined" color="primary">Sign In</ButtonBig>
+            <form onSubmit={postLogin}>
+                <TextField label="Name" variant="filled" type="text" onChange={e => {
+                    setUserName(e.target.value)
+                }} />
+                <TextFieldMargin label="Password" variant="filled" type="password" onChange={e => {
+                    setPassword(e.target.value)
+                }} />
+                <Button size="large" type="submit" variant="outlined" color="primary">Sign In</Button>
             </form>
             <LinkCenter to="/signup">Don't have an account?</LinkCenter>
             { isError && 
