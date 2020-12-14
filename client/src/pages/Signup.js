@@ -40,22 +40,23 @@ const AlertMessage = styled(Alert)({
 const Signup = () => {
     const [isLoggedIn, setIsLoggedIn] = useState(false)
     const [isError, setIsError] = useState(false)
+    const [isConnectionError, setIsConnectionError] = useState(false)
     const [userName, setUserName] = useState("")
     const [password, setPassword] = useState("")
+    const [userEmail, setEmail] = useState("")
     const [passwordConfirmation, setPasswordConfirmation] = useState("")
     const { setAuthTokens } = useAuth()
 
     const postRegister = (event) => {
         event.preventDefault()
-        if (password === passwordConfirmation) {
+        if (password !== passwordConfirmation) {
             setIsError(true)
-            console.log("passwords don't match")
             return
         }
         axios.post("http://localhost:1337/auth/local/register", {
-            userName,
-            password,
-            passwordConfirmation
+            username: userName,
+            email: userEmail,
+            password: password,
         }).then(result => {
             if (result.status === 200) {
                 setAuthTokens(result.data)
@@ -64,7 +65,8 @@ const Signup = () => {
                 setIsError(true)
             }
         }).catch(error => {
-            setIsError(true)
+            setIsError(false)
+            setIsConnectionError(true)
             console.log(error.result);
         })
     }
@@ -77,6 +79,9 @@ const Signup = () => {
                     <TextField label="Name" variant="filled" onChange={e => {
                     setUserName(e.target.value)
                 }} />
+                    <TextField label="Email" variant="filled" type="email" onChange={e => {
+                    setEmail(e.target.value)
+                }} />
                     <TextField label="Password" variant="filled" type="password" onChange={e => {
                     setPassword(e.target.value)
                 }} />
@@ -87,7 +92,10 @@ const Signup = () => {
                 </form>
                 <LinkCenter to="/login">Already have an account?</LinkCenter>
                 { isError && 
-                    <AlertMessage severity="error">Username or password are incorrect. Passwords must match.</AlertMessage>
+                    <AlertMessage severity="error">Either user name or password are wrong or you did not set your passwords correctly.</AlertMessage>
+                }
+                { isConnectionError && 
+                    <AlertMessage severity="error">Connection error. Contact us or try again later.</AlertMessage>
                 }
             </CenterContainer>
         </Box>

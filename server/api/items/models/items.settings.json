@@ -1,0 +1,24 @@
+{
+  "kind": "collectionType",
+  "collectionName": "items",
+  "info": {
+    "name": "items"
+  },
+  "options": {
+    "increments": true,
+    "timestamps": true,
+    "draftAndPublish": true
+  },
+  "attributes": {
+    "itemName": {
+      "type": "string"
+    },
+    "itemDescription": {
+      "type": "richtext"
+    },
+    "list": {
+      "model": "list",
+      "via": "items"
+    }
+  }
+}

@@ -40,19 +40,22 @@ const AlertMessage = styled(Alert)({
 const Login = () => {
     const [isLoggedIn, setIsLoggedIn] = useState(false)
     const [isError, setIsError] = useState(false)
-    const [userName, setUserName] = useState("")
+    const [userEmail, setEmail] = useState("")
     const [password, setPassword] = useState("")
     const { setAuthTokens } = useAuth()
 
     const postLogin = (event) => {
         event.preventDefault()
         axios.post("http://localhost:1337/auth/local", {
-            userName,
-            password
+            identifier: userEmail,
+            password: password,
         }).then(result => {
             if (result.status === 200) {
                 setAuthTokens(result.data)
                 setIsLoggedIn(true)
+                console.log('Well done!');
+    console.log('User profile', result.data.user);
+    console.log('User token', result.data.jwt);
             } else {
                 setIsError(true)
             }
@@ -69,8 +72,8 @@ const Login = () => {
         <CenterContainer maxWidth="xs">
             <Logo />
             <form onSubmit={postLogin}>
-                <TextField label="Name" variant="filled" type="text" onChange={e => {
-                    setUserName(e.target.value)
+            <TextField label="Email" variant="filled" type="email" onChange={e => {
+                    setEmail(e.target.value)
                 }} />
                 <TextFieldMargin label="Password" variant="filled" type="password" onChange={e => {
                     setPassword(e.target.value)
