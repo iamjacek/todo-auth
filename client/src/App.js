@@ -9,13 +9,29 @@ import Signup from './pages/Signup'
 import PrivateRoute from './PrivateRoute';
 import { AuthContext } from "./context/auth";
 
-function App(props) {
+import { createBrowserHistory } from 'history';
+let history = createBrowserHistory();
+
+function App() {
   const existingTokens = JSON.parse(localStorage.getItem("tokens"))
   const [authTokens, setAuthTokens] = useState(existingTokens)
 
   const setTokens = (data) => {
     localStorage.setItem("tokens", JSON.stringify(data))
     setAuthTokens(data)
+  }
+
+  const clearToken = () => {
+    if (localStorage) {
+      localStorage.removeItem("tokens")
+    }
+  }
+
+  const handleSignout = () => {
+    clearToken()
+    //just to not wait and do callback after state has been changed and immediately remove sign out button from navbar
+    setAuthTokens(null)
+    history.push("/")
   }
 
   return (
@@ -29,6 +45,7 @@ function App(props) {
             <li>
               <Link to="/lists">Lists</Link>
             </li>
+            { authTokens && <button onClick={handleSignout} >Sign Out</button> }
           </ul>
           <Route exact path="/" component={Home} />
           <Route path="/login" component={Login} />

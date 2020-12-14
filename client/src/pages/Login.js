@@ -53,9 +53,6 @@ const Login = () => {
             if (result.status === 200) {
                 setAuthTokens(result.data)
                 setIsLoggedIn(true)
-                console.log('Well done!');
-    console.log('User profile', result.data.user);
-    console.log('User token', result.data.jwt);
             } else {
                 setIsError(true)
             }
@@ -65,7 +62,9 @@ const Login = () => {
         })
     }
 
-    if (isLoggedIn) <Redirect to="/" />
+    if (isLoggedIn) {
+        return <Redirect to="/" />
+    }
 
     return (
         <Box>
