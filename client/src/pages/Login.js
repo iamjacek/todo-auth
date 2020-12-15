@@ -10,14 +10,6 @@ import Logo from "../components/Logo"
 //add styling using JSS object
 import { styled } from '@material-ui/core/styles'
 
-// const Logo = styled(Box)({
-//     width: '100px',
-//     height: '100px',
-//     background: `url(${logo})`,
-//     backgroundSize: 'cover',
-//     margin: '2rem auto 2rem auto',
-// })
-
 const CenterContainer = styled(Container)({
     display: 'flex',
     flexDirection: 'column',
@@ -37,8 +29,7 @@ const AlertMessage = styled(Alert)({
     marginBottom: '1rem'
 })
 
-const Login = () => {
-    const [isLoggedIn, setIsLoggedIn] = useState(false)
+const Login = (props) => {
     const [isError, setIsError] = useState(false)
     const [userEmail, setEmail] = useState("")
     const [password, setPassword] = useState("")
@@ -52,7 +43,7 @@ const Login = () => {
         }).then(result => {
             if (result.status === 200) {
                 setAuthTokens(result.data)
-                setIsLoggedIn(true)
+                props.history.push("/lists")
             } else {
                 setIsError(true)
             }
@@ -62,12 +53,8 @@ const Login = () => {
         })
     }
 
-    if (isLoggedIn) {
-        return <Redirect to="/" />
-    }
-
     return (
-        <Box>
+        <Box style={{minWidth: "100%"}}>
         <CenterContainer maxWidth="xs">
             <Logo />
             <form onSubmit={postLogin}>

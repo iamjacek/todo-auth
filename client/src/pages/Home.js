@@ -8,29 +8,33 @@ import { styled } from '@material-ui/core/styles'
 const CenterContainer = styled(Container)({
     display: 'flex',
     flexDirection: 'column',
-    justifyContent: 'center'
 })
 
-const TypographyMarginBottom = styled(Typography)({
-  marginBottom: "2rem"
+const Wrapper = styled(Box)({
+  display: 'flex',
+  flexDirection: 'column',
 })
 
 const Home = () => {
   return  (
-    <Box>
+    <Wrapper>
       <CenterContainer maxWidth="xs">
-          <Logo />
-          <Typography variant="h3" component="h1">
+          <div style={{marginBottom: "2rem"}}>
+            <Logo />
+          </div>
+          
+          <Typography variant="h3" component="h1" align="center" gutterBottom={true} >
             Create your list!
           </Typography>
-          <Typography component="subtitle1" gutterBottom={true}>
+
+          <Typography variant="subtitle1" align="center" paragraph={true} >
             Accomplish your goals!
           </Typography>
-          <Typography component="body1">
-            Register for free today and create your list. Access them from your browser everywhere. On your phone and desktop. From work and from home!
+          <Typography variant="body1" align="center"  >
+            Register for free today and create your list. Access them from your browser on your phone and desktop. So easy!
           </Typography>
       </CenterContainer>
-    </Box>
+    </Wrapper>
   )
 }
 

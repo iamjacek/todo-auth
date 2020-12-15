@@ -29,8 +29,7 @@ const AlertMessage = styled(Alert)({
     marginBottom: '1rem'
 })
 
-const Signup = () => {
-    const [isLoggedIn, setIsLoggedIn] = useState(false)
+const Signup = (props) => {
     const [isError, setIsError] = useState(false)
     const [isConnectionError, setIsConnectionError] = useState(false)
     const [userName, setUserName] = useState("")
@@ -52,7 +51,7 @@ const Signup = () => {
         }).then(result => {
             if (result.status === 200) {
                 setAuthTokens(result.data)
-                setIsLoggedIn(true)
+                props.history.push("/lists")
             } else {
                 setIsError(true)
             }
@@ -64,7 +63,7 @@ const Signup = () => {
     }
 
     return (
-        <Box>
+        <Box  style={{minWidth: "100%"}}>
             <CenterContainer maxWidth="xs">
                 <Logo />
                 <form onSubmit={postRegister}>

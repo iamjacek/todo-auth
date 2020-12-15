@@ -18,7 +18,18 @@ form {
 
 li {
   list-style-type: none;
-  padding: 0.2rem 1rem;
+  padding: 0.6rem 0;
+  text-decoration: none;
+}
+
+a,
+a:visited {
+  text-decoration: none;
+  color: currentColor;
+}
+
+a:hover {
+  color: #fc6e51;
 }
 
 ul {
@@ -26,7 +37,18 @@ ul {
   flex-direction: column;
   justify-content: space-between;
   align-items: center;
-  padding: 1rem 0;
+  padding: 0.5rem 0;
+}
+
+footer {
+  padding: 1rem;
+  text-align: center;
+}
+
+main {
+  display: flex;
+  flex-grow: 1;
+  justify-content: center;
 }
 
 @media screen and (min-width: 599px) {
@@ -36,6 +58,6 @@ ul {
   }
 
   li {
-    padding: 0 1rem;
+    padding: 1rem;
   }
 }

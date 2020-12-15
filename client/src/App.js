@@ -10,6 +10,7 @@ import PrivateRoute from './PrivateRoute';
 import { AuthContext } from "./context/auth";
 
 import { Avatar, Container, Button } from '@material-ui/core'
+import { styled } from '@material-ui/core/styles'
 
 import { createBrowserHistory } from 'history';
 let history = createBrowserHistory();
@@ -36,10 +37,16 @@ function App() {
     history.push("/")
   }
 
+  const Wrapper = styled(Container)({
+    minHeight: "100vh",
+    display: "flex",
+    flexDirection: "column",
+  })
+
   return (
     <AuthContext.Provider value={{authTokens, setAuthTokens: setTokens}}>
       <Router>
-        <Container>
+        <Wrapper>
           {/* MENU NAVBAR */}
           <ul>
             <ul>
@@ -61,11 +68,24 @@ function App() {
             </ul>
             
           </ul>
-          <Route exact path="/" component={Home} />
-          <Route path="/login" component={Login} />
-          <Route path="/signup" component={Signup} />
-          <PrivateRoute path="/lists" component={Lists} />
-        </Container>
+          <main>
+            <Route exact path="/" component={Home} />
+            <Route path="/login" component={Login} />
+            <Route path="/signup" component={Signup} />
+            <PrivateRoute path="/lists" component={Lists} />
+          </main>
+          <footer>
+            <p>
+              <span>ToDo Auth</span> ©{" "}
+              {new Date().getFullYear()}, Built by
+              {` `}
+              <a href="https://www.jacekwitucki.com" target="_blank" rel="noreferrer">
+                Jacek Witucki
+              </a>
+              {` `}
+            </p>
+          </footer>
+        </Wrapper>
       </Router>
     </AuthContext.Provider>
   )
