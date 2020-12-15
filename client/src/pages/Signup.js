@@ -1,6 +1,6 @@
 import React, { useState } from 'react'
 import { Link } from 'react-router-dom'
-import logo from '../img/logo.png'
+import Logo from "../components/Logo"
 import axios from 'axios'
 import { useAuth } from '../context/auth' 
 
@@ -9,14 +9,6 @@ import Alert from '@material-ui/lab/Alert';
 
 //add styling using JSS object
 import { styled } from '@material-ui/core/styles'
-
-const Logo = styled(Box)({
-    width: '100px',
-    height: '100px',
-    background: `url(${logo})`,
-    backgroundSize: 'cover',
-    margin: '2rem auto 2rem auto',
-})
 
 const CenterContainer = styled(Container)({
     display: 'flex',

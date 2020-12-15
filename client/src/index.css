@@ -15,3 +15,27 @@ form {
   margin-top: 1rem;
   margin-bottom: 1rem;
 }
+
+li {
+  list-style-type: none;
+  padding: 0.2rem 1rem;
+}
+
+ul {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1rem 0;
+}
+
+@media screen and (min-width: 599px) {
+  ul {
+    display: flex;
+    flex-direction: row;
+  }
+
+  li {
+    padding: 0 1rem;
+  }
+}
