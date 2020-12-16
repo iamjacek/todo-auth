@@ -17,8 +17,8 @@
       "type": "richtext"
     },
     "list": {
-      "model": "list",
-      "via": "items"
+      "via": "items",
+      "model": "list"
     }
   }
 }

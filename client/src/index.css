@@ -51,6 +51,10 @@ main {
   justify-content: center;
 }
 
+.item__clicked {
+  background-color: lightgreen !important;
+}
+
 @media screen and (min-width: 599px) {
   ul {
     display: flex;

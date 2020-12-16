@@ -51,6 +51,7 @@ const Signup = (props) => {
         }).then(result => {
             if (result.status === 200) {
                 setAuthTokens(result.data)
+                localStorage.setItem("userID", JSON.stringify(result.data.user._id))
                 props.history.push("/lists")
             } else {
                 setIsError(true)
