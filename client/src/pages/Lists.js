@@ -1,7 +1,9 @@
-import React, { useState } from "react"
-import { Box, Container, Typography, Card, Chip } from '@material-ui/core'
+import React from "react"
+import { Box, Container, Typography, Card, Chip, TextField } from '@material-ui/core'
 import Logo from "../components/Logo"
 import Icon from '@material-ui/core/Icon';
+
+import { useAuth } from "../context/auth";
 
 //add styling using JSS object
 import { styled } from '@material-ui/core/styles'
@@ -25,6 +27,8 @@ const LIST_DATA = gql`
     }
   }
 `;
+
+
 
 const CenterContainer = styled(Container)({
   display: 'flex',
@@ -56,6 +60,8 @@ const handleDelete = () => {
 
 
 const Lists = () => {
+  const { authTokens } = useAuth()
+  const ID = authTokens.user._id
   const { loading, error, data } = useQuery(LIST_DATA);
 
   const handleClick = (e) => {
@@ -65,8 +71,7 @@ const Lists = () => {
   if (loading) return <p>Loading...</p>;
 
   if (error) return <p>Error :(</p>;
-
-  const userID = JSON.parse(localStorage.getItem("userID"))
+    
   return  (
     <Wrapper>
       <CenterContainer>
@@ -85,10 +90,11 @@ const Lists = () => {
             <CardList elevation={3} style={{display: "flex", flexDirection: "column", justifyContent: "center", alignItems: "center"}}>
               <h2 style={{marginBottom: "0.2rem"}}>Create new list</h2>
               <Icon style={{ fontSize: 50 }}>add_circle</Icon>
+              <TextField id="filled-basic" label="Filled" variant="filled" />
             </CardList>
-
+           
             {data.lists.map(({_id, name, description, items, users_permissions_user}) => (
-              (users_permissions_user._id === userID) && (
+              (users_permissions_user._id === ID) && (
                   <CardList elevation={3} key={_id}>
                     <h2 style={{marginBottom: "0.2rem"}}>{name}</h2>
                     <p style={{marginBottom: "1rem", color:"gray"}}>{description}</p>
