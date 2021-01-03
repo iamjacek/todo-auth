@@ -1,24 +1,23 @@
-import React, { useState } from "react";
+import React, { useState } from "react"
 import { BrowserRouter as Router, Link, Route } from "react-router-dom"
 
 import Home from "./pages/Home"
 import Lists from "./pages/Lists"
-import Login from './pages/Login'
-import Signup from './pages/Signup'
+import Login from "./pages/Login"
+import Signup from "./pages/Signup"
 
-import PrivateRoute from './PrivateRoute';
-import { AuthContext } from "./context/auth";
+import PrivateRoute from "./PrivateRoute"
+import { AuthContext } from "./context/auth"
 
-import { Avatar, Container, Button } from '@material-ui/core'
-import { styled } from '@material-ui/core/styles'
+import { Avatar, Container, Button } from "@material-ui/core"
+import { styled } from "@material-ui/core/styles"
 
-import { createBrowserHistory } from 'history';
+import { createBrowserHistory } from "history"
 
-
-import { ApolloProvider } from '@apollo/client';
+import { ApolloProvider } from "@apollo/client"
 import { ApolloClient, InMemoryCache } from "@apollo/client"
 const apiUrl = process.env.API_URL || "http://localhost:1337/graphql"
-let history = createBrowserHistory();
+let history = createBrowserHistory()
 const client = new ApolloClient({
   uri: apiUrl,
   cache: new InMemoryCache(),
@@ -55,7 +54,7 @@ function App() {
 
   return (
     <ApolloProvider client={client}>
-      <AuthContext.Provider value={{authTokens, setAuthTokens: setTokens}}>
+      <AuthContext.Provider value={{ authTokens, setAuthTokens: setTokens }}>
         <Router>
           <Wrapper>
             {/* MENU NAVBAR */}
@@ -68,16 +67,44 @@ function App() {
                   <Link to="/lists">Lists</Link>
                 </li>
               </ul>
-              
-              
+
               <ul>
-              { authTokens && <li>Welcome back {authTokens.user.username}!</li>}
-                { authTokens && <li><Button size="small" variant="outlined" color="primary" onClick={handleSignout} >Sign Out</Button> </li>}
-                { authTokens && <li> <Avatar style={{background: "#fc6e51"}}>{authTokens.user.username.charAt(0).toUpperCase()}</Avatar></li>}
-                { !authTokens && <li> <Link to="/login">Log In</Link></li>}
-                { !authTokens && <li> <Link to="/signup">Register</Link></li>}
+                {authTokens && (
+                  <li>Welcome back {authTokens.user.username}!</li>
+                )}
+                {authTokens && (
+                  <li>
+                    <Button
+                      size="small"
+                      variant="outlined"
+                      color="primary"
+                      onClick={handleSignout}
+                    >
+                      Sign Out
+                    </Button>{" "}
+                  </li>
+                )}
+                {authTokens && (
+                  <li>
+                    {" "}
+                    <Avatar style={{ background: "#fc6e51" }}>
+                      {authTokens.user.username.charAt(0).toUpperCase()}
+                    </Avatar>
+                  </li>
+                )}
+                {!authTokens && (
+                  <li>
+                    {" "}
+                    <Link to="/login">Log In</Link>
+                  </li>
+                )}
+                {!authTokens && (
+                  <li>
+                    {" "}
+                    <Link to="/signup">Register</Link>
+                  </li>
+                )}
               </ul>
-              
             </ul>
             <main>
               <Route exact path="/" component={Home} />
@@ -87,10 +114,13 @@ function App() {
             </main>
             <footer>
               <p>
-                <span>ToDo Auth</span> ©{" "}
-                {new Date().getFullYear()}, Built by
+                <span>ToDo Auth</span> © {new Date().getFullYear()}, Built by
                 {` `}
-                <a href="https://www.jacekwitucki.com" target="_blank" rel="noreferrer">
+                <a
+                  href="https://www.jacekwitucki.com"
+                  target="_blank"
+                  rel="noreferrer"
+                >
                   Jacek Witucki
                 </a>
                 {` `}
