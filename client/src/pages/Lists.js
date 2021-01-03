@@ -1,4 +1,4 @@
-import React, { useState } from "react"
+import React, { useState, useEffect } from "react"
 import {
   Box,
   Container,
@@ -11,6 +11,7 @@ import Logo from "../components/Logo"
 import Icon from "@material-ui/core/Icon"
 
 import { useAuth } from "../context/auth"
+import { setListsToStorage, getListsFromStorage } from "../utils"
 
 //add styling using JSS object
 import { styled } from "@material-ui/core/styles"
@@ -72,6 +73,14 @@ var flagItems = 0
 const Lists = () => {
   const [customLists, setCustomLists] = useState([])
 
+  useEffect(() => {
+    setCustomLists(getListsFromStorage("lists"))
+  }, [])
+
+  useEffect(() => {
+    setListsToStorage(customLists)
+  }, [customLists])
+
   const { authTokens } = useAuth()
   const ID = authTokens.user._id
   const { loading, error, data } = useQuery(LIST_DATA)
@@ -117,7 +126,6 @@ const Lists = () => {
       })
 
       let updatedList = [...customLists]
-      console.log(updatedList)
       let listToBeUpdated = { ...customLists[arrayIndex] }
       listToBeUpdated.items.push({ itemName: newItem, _id: flagItems })
       customLists[arrayIndex] = listToBeUpdated
