@@ -63,22 +63,27 @@ const AddItem = styled(Box)({
   flexDirection: "row",
 })
 
-const handleDelete = () => {
-  console.info("You clicked the delete icon.")
-}
-
-var flag = 0
-var flagItems = 0
+//flags for Lits and items (avoid map unique key error)
+var flag = localStorage.getItem("flag") ? localStorage.getItem("flag") : 0
+var flagItems = localStorage.getItem("flagItems")
+  ? localStorage.getItem("flagItems")
+  : 0
 
 const Lists = () => {
   const [customLists, setCustomLists] = useState([])
 
+  //pull lists from storage
   useEffect(() => {
     setCustomLists(getListsFromStorage("lists"))
   }, [])
 
+  //save lists and flags to localStorage
   useEffect(() => {
     setListsToStorage(customLists)
+    if (localStorage) {
+      localStorage.setItem("flag", flag)
+      localStorage.setItem("flagItems", flagItems)
+    }
   }, [customLists])
 
   const { authTokens } = useAuth()
@@ -91,6 +96,7 @@ const Lists = () => {
     if (newListName === null || newListName === "") {
       console.log("error, name is required")
     } else {
+      //description is optional
       const description = newListDesc || ""
       setCustomLists([
         {
@@ -107,36 +113,57 @@ const Lists = () => {
     }
   }
 
+  //finds index of the list with passed id within customLists state
+  const findListIndex = (id) => {
+    var index
+    customLists.map((list) => {
+      if (list._id === id) {
+        index = customLists.indexOf(list)
+        return null
+      } else {
+        return null
+      }
+    })
+    return index
+  }
+
   const addNewItem = (e, id) => {
-    //check item input ? empty and is unique for a list
+    //check item input is empty and is unique for a list
     const newItem = e.currentTarget.previousSibling.getElementsByTagName(
       "INPUT"
     )[0].value
-    let arrayIndex
+
     if (newItem === null || newItem === "") {
       console.log("please insert item name before you try to add it")
     } else {
-      customLists.map((list) => {
-        if (list._id === id) {
-          arrayIndex = customLists.indexOf(list)
-          return arrayIndex
-        } else {
-          return null
-        }
-      })
-
-      let updatedList = [...customLists]
-      let listToBeUpdated = { ...customLists[arrayIndex] }
-      listToBeUpdated.items.push({ itemName: newItem, _id: flagItems })
-      customLists[arrayIndex] = listToBeUpdated
+      const arrayIndex = findListIndex(id)
+      let updatedLists = [...customLists]
+      let listToBeUpdated = { ...updatedLists[arrayIndex] }
+      listToBeUpdated.items.push({ itemName: newItem, _id: Number(flagItems) })
+      updatedLists[arrayIndex] = listToBeUpdated
       flagItems++
-      setCustomLists(updatedList)
-      console.log(customLists)
+      setCustomLists(updatedLists)
+      e.currentTarget.previousSibling.getElementsByTagName("INPUT")[0].value =
+        ""
     }
   }
 
   const handleClick = (e) => {
     e.currentTarget.classList.toggle("item__clicked")
+  }
+
+  const handleDelete = (id, item) => {
+    //get array index of the list we want to remove our item
+    const arrayIndex = findListIndex(id)
+    let updatedLists = [...customLists]
+    let singleList = { ...updatedLists[arrayIndex] }
+    //filter clicked item and add it back to list
+    const filtered = singleList.items.filter(
+      (elem) => Number(elem._id) !== Number(item)
+    )
+    singleList.items = filtered
+    updatedLists[arrayIndex] = singleList
+    setCustomLists(updatedLists)
   }
 
   if (loading) return <p>Loading...</p>
@@ -192,7 +219,7 @@ const Lists = () => {
                 {description}
               </p>
               <AddItem>
-                <TextField id="newItem" label="New Item" variant="filled" />
+                <TextField label="New Item" variant="filled" />
                 <Icon
                   style={{ fontSize: 30, margin: "auto" }}
                   onClick={(e) => {
@@ -211,7 +238,7 @@ const Lists = () => {
                   <Chip
                     label={item.itemName}
                     onClick={handleClick}
-                    onDelete={handleDelete}
+                    onDelete={() => handleDelete(_id, item._id)}
                     color="primary"
                     variant="outlined"
                   />
@@ -236,7 +263,7 @@ const Lists = () => {
                       <Chip
                         label={item.itemName}
                         onClick={handleClick}
-                        onDelete={handleDelete}
+                        onDelete={(e) => handleDelete(e)}
                         color="primary"
                         variant="outlined"
                       />
