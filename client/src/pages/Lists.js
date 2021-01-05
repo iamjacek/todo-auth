@@ -6,6 +6,7 @@ import {
   Card,
   Chip,
   TextField,
+  Tooltip,
 } from "@material-ui/core"
 import Logo from "../components/Logo"
 import Icon from "@material-ui/core/Icon"
@@ -255,19 +256,21 @@ const Lists = () => {
                   key={item._id}
                   style={{ margin: "0.5rem 0", display: "block" }}
                 >
-                  <Chip
-                    label={item.itemName}
-                    onClick={() => handleClick(_id, item._id)}
-                    onDelete={() => handleDelete(_id, item._id)}
-                    color="default"
-                    variant="outlined"
-                    className={item.checked ? "item__clicked" : ""}
-                  />
+                  <Tooltip title={item.description || ""}>
+                    <Chip
+                      label={item.itemName}
+                      onClick={() => handleClick(_id, item._id)}
+                      onDelete={() => handleDelete(_id, item._id)}
+                      color="default"
+                      variant="outlined"
+                      className={item.checked ? "item__clicked" : ""}
+                    />
+                  </Tooltip>
                 </div>
               ))}
             </CardList>
           ))}
-
+          {/* **************** LISTS FROM STRAPI ******************** */}
           {data.lists.map(
             ({ _id, name, description, items, users_permissions_user }) =>
               users_permissions_user._id === ID && (
