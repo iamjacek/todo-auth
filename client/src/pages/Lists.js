@@ -31,6 +31,7 @@ const LIST_DATA = gql`
         itemName
         itemDescription
         _id
+        checked
       }
     }
   }
@@ -94,7 +95,7 @@ const Lists = () => {
     const newListName = document.querySelector("#newListName").value
     const newListDesc = document.querySelector("#newListDesc").value
     if (newListName === null || newListName === "") {
-      console.log("error, name is required")
+      document.querySelector("#newListName").classList.add("form__input--error")
     } else {
       //description is optional
       const description = newListDesc || ""
@@ -108,6 +109,9 @@ const Lists = () => {
         ...customLists,
       ])
       flag++
+      document
+        .querySelector("#newListName")
+        .classList.remove("form__input--error")
       document.querySelector("#newListName").value = ""
       document.querySelector("#newListDesc").value = ""
     }
@@ -139,7 +143,11 @@ const Lists = () => {
       const arrayIndex = findListIndex(id)
       let updatedLists = [...customLists]
       let listToBeUpdated = { ...updatedLists[arrayIndex] }
-      listToBeUpdated.items.push({ itemName: newItem, _id: Number(flagItems) })
+      listToBeUpdated.items.push({
+        itemName: newItem,
+        _id: Number(flagItems),
+        checked: false,
+      })
       updatedLists[arrayIndex] = listToBeUpdated
       flagItems++
       setCustomLists(updatedLists)
@@ -148,8 +156,17 @@ const Lists = () => {
     }
   }
 
-  const handleClick = (e) => {
-    e.currentTarget.classList.toggle("item__clicked")
+  //checked/mark as done
+  const handleClick = (id, itemId) => {
+    //find list
+    const arrayIndex = findListIndex(id)
+    let updatedLists = [...customLists]
+    let singleList = { ...updatedLists[arrayIndex] }
+    //find item
+    const itemIndex = singleList.items.findIndex((item) => item._id === itemId)
+    //toggle item.change
+    singleList.items[itemIndex].checked = !singleList.items[itemIndex].checked
+    setCustomLists(updatedLists)
   }
 
   const handleDelete = (id, item) => {
@@ -221,7 +238,10 @@ const Lists = () => {
               <AddItem>
                 <TextField label="New Item" variant="filled" />
                 <Icon
-                  style={{ fontSize: 30, margin: "auto" }}
+                  style={{
+                    fontSize: 30,
+                    margin: "auto -5px auto 5px",
+                  }}
                   onClick={(e) => {
                     addNewItem(e, _id)
                   }}
@@ -237,10 +257,11 @@ const Lists = () => {
                 >
                   <Chip
                     label={item.itemName}
-                    onClick={handleClick}
+                    onClick={() => handleClick(_id, item._id)}
                     onDelete={() => handleDelete(_id, item._id)}
-                    color="primary"
+                    color="default"
                     variant="outlined"
+                    className={item.checked ? "item__clicked" : ""}
                   />
                 </div>
               ))}
@@ -264,8 +285,9 @@ const Lists = () => {
                         label={item.itemName}
                         onClick={handleClick}
                         onDelete={(e) => handleDelete(e)}
-                        color="primary"
+                        color="default"
                         variant="outlined"
+                        className={item.checked ? "item__clicked" : ""}
                       />
                     </div>
                   ))}

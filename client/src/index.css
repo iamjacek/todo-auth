@@ -52,7 +52,12 @@ main {
 }
 
 .item__clicked {
-  background-color: lightgreen !important;
+  background-color: #fc6e51 !important;
+}
+
+.form__input--error {
+  border-radius: 5px;
+  border: solid 3px red !important;
 }
 
 @media screen and (min-width: 599px) {

@@ -30,8 +30,8 @@
       "required": false
     },
     "items": {
-      "collection": "items",
-      "via": "list"
+      "via": "list",
+      "collection": "items"
     },
     "users_permissions_user": {
       "plugin": "users-permissions",
