@@ -9,6 +9,11 @@ html,
   -moz-osx-font-smoothing: grayscale;
 }
 
+body,
+html {
+  height: 100%;
+}
+
 form {
   display: flex;
   flex-direction: column;
@@ -51,8 +56,23 @@ main {
   justify-content: center;
 }
 
-.item__clicked {
+.list__item--clicked {
   background-color: #fc6e51 !important;
+  color: white !important;
+  font-style: italic;
+  width: 100%;
+  display: flex;
+  align-items: center !important;
+  justify-content: space-between !important;
+  padding: 0 0.2rem !important;
+}
+
+.list__item {
+  width: 100%;
+  display: flex;
+  align-items: center !important;
+  justify-content: space-between !important;
+  padding: 0 0.2rem !important;
 }
 
 .form__input--error {

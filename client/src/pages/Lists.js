@@ -7,6 +7,7 @@ import {
   Chip,
   TextField,
   Tooltip,
+  Button,
 } from "@material-ui/core"
 import Logo from "../components/Logo"
 import Icon from "@material-ui/core/Icon"
@@ -55,14 +56,18 @@ const CardWrapper = styled(Box)({
 })
 
 const CardList = styled(Card)({
-  width: "200px",
-  margin: "0.5rem",
-  padding: "0.5rem 1rem",
+  minWidth: "200px",
+  maxWidth: "350px",
+  margin: "1rem 0.5rem",
+  padding: "1rem 1rem",
+  display: "flex",
+  flexDirection: "column",
 })
 
 const AddItem = styled(Box)({
   display: "flex",
   flexDirection: "row",
+  marginBottom: "2rem",
 })
 
 //flags for Lits and items (avoid map unique key error)
@@ -184,6 +189,13 @@ const Lists = () => {
     setCustomLists(updatedLists)
   }
 
+  const handleRemoveList = (listId) => {
+    const index = findListIndex(listId)
+    let updatedLists = [...customLists]
+    updatedLists.splice(index, 1)
+    setCustomLists(updatedLists)
+  }
+
   if (loading) return <p>Loading...</p>
 
   if (error) return <p>Error :(</p>
@@ -232,44 +244,60 @@ const Lists = () => {
           {/* **************** CUSTOM LISTS ADDED LOCALLY ******************** */}
           {customLists.map(({ _id, name, description, items }) => (
             <CardList elevation={3} key={_id}>
-              <h2 style={{ marginBottom: "0.2rem" }}>{name}</h2>
-              <p style={{ marginBottom: "1rem", color: "gray" }}>
-                {description}
-              </p>
-              <AddItem>
-                <TextField label="New Item" variant="filled" />
-                <Icon
-                  style={{
-                    fontSize: 30,
-                    margin: "auto -5px auto 5px",
-                  }}
-                  onClick={(e) => {
-                    addNewItem(e, _id)
-                  }}
-                >
-                  add_circle
-                </Icon>
-              </AddItem>
+              <Box flexGrow={1}>
+                <h2 style={{ marginBottom: "0.5rem" }}>{name}</h2>
+                <p style={{ marginBottom: "1rem", color: "gray" }}>
+                  {description}
+                </p>
+                <AddItem>
+                  <TextField label="New Item" variant="filled" />
+                  <Icon
+                    style={{
+                      fontSize: 30,
+                      margin: "auto -5px auto 5px",
+                    }}
+                    onClick={(e) => {
+                      addNewItem(e, _id)
+                    }}
+                  >
+                    add_circle
+                  </Icon>
+                </AddItem>
 
-              {items.map((item) => (
-                <div
-                  key={item._id}
-                  style={{ margin: "0.5rem 0", display: "block" }}
+                {items.map((item) => (
+                  <div
+                    key={item._id}
+                    style={{ margin: "0.5rem 0", display: "block" }}
+                  >
+                    <Tooltip title={item.description || ""}>
+                      <Chip
+                        label={item.itemName}
+                        onClick={() => handleClick(_id, item._id)}
+                        onDelete={() => handleDelete(_id, item._id)}
+                        color="default"
+                        variant="outlined"
+                        className={
+                          item.checked ? "list__item--clicked" : "list__item"
+                        }
+                      />
+                    </Tooltip>
+                  </div>
+                ))}
+              </Box>
+              <Box style={{ display: "flex", justifyContent: "space-between" }}>
+                {items.length > 0 && (
+                  <Button style={{ marginTop: "1rem" }}>CLEAR LIST</Button>
+                )}
+                <Button
+                  style={{ marginTop: "1rem", marginLeft: "auto" }}
+                  onClick={() => handleRemoveList(_id)}
                 >
-                  <Tooltip title={item.description || ""}>
-                    <Chip
-                      label={item.itemName}
-                      onClick={() => handleClick(_id, item._id)}
-                      onDelete={() => handleDelete(_id, item._id)}
-                      color="default"
-                      variant="outlined"
-                      className={item.checked ? "item__clicked" : ""}
-                    />
-                  </Tooltip>
-                </div>
-              ))}
+                  REMOVE LIST
+                </Button>
+              </Box>
             </CardList>
           ))}
+
           {/* **************** LISTS FROM STRAPI ******************** */}
           {data.lists.map(
             ({ _id, name, description, items, users_permissions_user }) =>
