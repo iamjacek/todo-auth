@@ -8,6 +8,7 @@ import {
   TextField,
   Tooltip,
   Button,
+  CircularProgress,
 } from "@material-ui/core"
 import Logo from "../components/Logo"
 import Icon from "@material-ui/core/Icon"
@@ -206,7 +207,12 @@ const Lists = () => {
     setCustomLists(updatedLists)
   }
 
-  if (loading) return <p>Loading...</p>
+  if (loading)
+    return (
+      <Box display="flex" justifyContent="center" alignItems="center">
+        <CircularProgress />
+      </Box>
+    )
 
   if (error) return <p>Error :(</p>
 
