@@ -196,6 +196,16 @@ const Lists = () => {
     setCustomLists(updatedLists)
   }
 
+  //remove all items
+  const handleClearAll = (listId) => {
+    const index = findListIndex(listId)
+    let updatedLists = [...customLists]
+    let singleList = { ...updatedLists[index] }
+    singleList.items = []
+    updatedLists[index] = singleList
+    setCustomLists(updatedLists)
+  }
+
   if (loading) return <p>Loading...</p>
 
   if (error) return <p>Error :(</p>
@@ -285,9 +295,14 @@ const Lists = () => {
                 ))}
               </Box>
               <Box style={{ display: "flex", justifyContent: "space-between" }}>
-                {items.length > 0 && (
-                  <Button style={{ marginTop: "1rem" }}>CLEAR LIST</Button>
-                )}
+                <Button
+                  style={{ marginTop: "1rem" }}
+                  onClick={() => handleClearAll(_id)}
+                  disabled={items.length === 0}
+                >
+                  CLEAR LIST
+                </Button>
+
                 <Button
                   style={{ marginTop: "1rem", marginLeft: "auto" }}
                   onClick={() => handleRemoveList(_id)}
