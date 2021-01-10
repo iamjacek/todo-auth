@@ -9,6 +9,7 @@ import {
   Tooltip,
   Button,
   CircularProgress,
+  Divider,
 } from "@material-ui/core"
 import Logo from "../components/Logo"
 import Icon from "@material-ui/core/Icon"
@@ -80,6 +81,34 @@ var flagItems = localStorage.getItem("flagItems")
 const Lists = () => {
   const [customLists, setCustomLists] = useState([])
 
+  function clicker(event) {
+    console.log("enter")
+    if (event.keyCode === 13) {
+      //add list using enter keyboard key
+      const a = document.querySelector("#newListName")
+      const b = document.querySelector("#newListDesc")
+      if (document.activeElement === a || document.activeElement === b) {
+        document.getElementById("newListButton").click()
+      }
+      //add item using enter keyboard key
+      const c = document.querySelectorAll(".newItemName")
+      c.forEach((e) => {
+        if (e.getElementsByTagName("INPUT")[0] === document.activeElement) {
+          e.getElementsByTagName(
+            "INPUT"
+          )[0].parentNode.parentNode.nextSibling.click()
+        }
+      })
+    }
+  }
+
+  useEffect(() => {
+    window.addEventListener("keyup", clicker)
+    return () => {
+      window.removeEventListener("keyup", clicker)
+    }
+  }, [])
+
   //pull lists from storage
   useEffect(() => {
     setCustomLists(getListsFromStorage("lists"))
@@ -145,7 +174,9 @@ const Lists = () => {
     )[0].value
 
     if (newItem === null || newItem === "") {
-      console.log("please insert item name before you try to add it")
+      e.currentTarget.previousSibling
+        .getElementsByTagName("INPUT")[0]
+        .classList.add("form__input--error")
     } else {
       const arrayIndex = findListIndex(id)
       let updatedLists = [...customLists]
@@ -160,6 +191,9 @@ const Lists = () => {
       setCustomLists(updatedLists)
       e.currentTarget.previousSibling.getElementsByTagName("INPUT")[0].value =
         ""
+      e.currentTarget.previousSibling
+        .getElementsByTagName("INPUT")[0]
+        .classList.remove("form__input--error")
     }
   }
 
@@ -241,14 +275,35 @@ const Lists = () => {
               padding: "1rem",
             }}
           >
-            <Typography component="h2" style={{ marginBottom: "0.5rem" }}>
-              Create new list
+            <Typography
+              component="h2"
+              style={{
+                marginBottom: "1rem",
+                display: "flex",
+                justifyContent: "center",
+              }}
+            >
+              Create new list here!
             </Typography>
 
-            <TextField id="newListName" label="Name" variant="filled" />
-            <TextField id="newListDesc" label="Description" variant="filled" />
+            <TextField
+              id="newListName"
+              label="Name"
+              variant="outlined"
+              style={{ marginBottom: "1rem" }}
+            />
+            <TextField
+              id="newListDesc"
+              label="Description"
+              variant="outlined"
+            />
             <Icon
-              style={{ fontSize: 50, margin: "0.5rem auto 0 auto" }}
+              id="newListButton"
+              style={{
+                fontSize: 50,
+                margin: "0.5rem auto 0 auto",
+                cursor: "pointer",
+              }}
               onClick={() => {
                 addNewList()
               }}
@@ -261,16 +316,32 @@ const Lists = () => {
           {customLists.map(({ _id, name, description, items }) => (
             <CardList elevation={3} key={_id}>
               <Box flexGrow={1}>
-                <h2 style={{ marginBottom: "0.5rem" }}>{name}</h2>
+                <Typography
+                  component="h2"
+                  style={{
+                    marginBottom: "0.5rem",
+                    textTransform: "uppercase",
+                    display: "flex",
+                    justifyContent: "center",
+                  }}
+                >
+                  {name}
+                </Typography>
                 <p style={{ marginBottom: "1rem", color: "gray" }}>
                   {description}
                 </p>
                 <AddItem>
-                  <TextField label="New Item" variant="filled" />
+                  <TextField
+                    label="New Item"
+                    variant="outlined"
+                    className="newItemName"
+                  />
                   <Icon
+                    className="newItemButton"
                     style={{
                       fontSize: 30,
                       margin: "auto -5px auto 5px",
+                      cursor: "pointer",
                     }}
                     onClick={(e) => {
                       addNewItem(e, _id)
@@ -279,7 +350,7 @@ const Lists = () => {
                     add_circle
                   </Icon>
                 </AddItem>
-
+                <Divider style={{ marginBottom: "2rem" }} />
                 {items.map((item) => (
                   <div
                     key={item._id}
@@ -299,6 +370,11 @@ const Lists = () => {
                     </Tooltip>
                   </div>
                 ))}
+                {items.length === 0 && (
+                  <Box display="flex" justifyContent="center">
+                    This list is empty
+                  </Box>
+                )}
               </Box>
               <Box style={{ display: "flex", justifyContent: "space-between" }}>
                 <Button
