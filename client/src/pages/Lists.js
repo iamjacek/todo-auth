@@ -20,7 +20,7 @@ import { setListsToStorage, getListsFromStorage } from "../utils"
 //add styling using JSS object
 import { styled } from "@material-ui/core/styles"
 
-import { useQuery, gql } from "@apollo/client"
+import { useQuery, useMutation, gql } from "@apollo/client"
 
 const LIST_DATA = gql`
   query {
@@ -36,6 +36,28 @@ const LIST_DATA = gql`
         itemDescription
         _id
         checked
+      }
+    }
+  }
+`
+
+const CREATE_LIST = gql`
+  mutation CreateList($name: String!, $description: String, $user: ID) {
+    createList(
+      input: {
+        data: {
+          name: $name
+          description: $description
+          users_permissions_user: $user
+        }
+      }
+    ) {
+      list {
+        name
+        description
+        users_permissions_user {
+          _id
+        }
       }
     }
   }
@@ -79,7 +101,14 @@ var flagItems = localStorage.getItem("flagItems")
   : 0
 
 const Lists = () => {
+  //local state for list items
   const [customLists, setCustomLists] = useState([])
+
+  //state for input to be mutated
+  const [newList, setNewList] = useState({
+    listName: "",
+    listDescription: "",
+  })
 
   function clicker(event) {
     console.log("enter")
@@ -126,6 +155,16 @@ const Lists = () => {
   const { authTokens } = useAuth()
   const ID = authTokens.user._id
   const { loading, error, data } = useQuery(LIST_DATA)
+
+  // MUTATION FUNCTIONS *******  ***********  ************  ********  ******  *****
+
+  const [createList] = useMutation(CREATE_LIST, {
+    variables: {
+      name: newList.listName,
+      description: newList.listDescription,
+      user: ID,
+    },
+  })
 
   const addNewList = () => {
     const newListName = document.querySelector("#newListName").value
@@ -265,7 +304,8 @@ const Lists = () => {
           Simply choose one of your lists or create new
         </Typography>
         <CardWrapper id="cardWrapper">
-          <CardList
+          {/* CREATE STRAPI LIST OFFLINE AND STORE IN LOCAL STORAGE
+           <CardList
             elevation={3}
             style={{
               display: "flex",
@@ -310,8 +350,74 @@ const Lists = () => {
             >
               add_circle
             </Icon>
-          </CardList>
+          </CardList> */}
 
+          {/* CREATE NEW LIST IN STRAPI */}
+          <CardList
+            elevation={3}
+            style={{
+              display: "flex",
+              flexDirection: "column",
+              justifyContent: "center",
+              alignItems: "left",
+              padding: "1rem",
+            }}
+          >
+            <Typography
+              component="h2"
+              style={{
+                marginBottom: "1rem",
+                display: "flex",
+                justifyContent: "center",
+              }}
+            >
+              Create new list right in strapi here!
+            </Typography>
+            <form
+              onSubmit={(e) => {
+                e.preventDefault()
+                createList()
+              }}
+            >
+              <TextField
+                id="newListStrapiName"
+                label="Name"
+                variant="outlined"
+                value={newList.listName}
+                onChange={(e) => {
+                  setNewList({
+                    ...newList,
+                    listName: e.target.value,
+                  })
+                }}
+                style={{ marginBottom: "1rem" }}
+              />
+              <TextField
+                id="newListStrapiDesc"
+                label="Description"
+                variant="outlined"
+                value={newList.listDescription}
+                onChange={(e) => {
+                  setNewList({
+                    ...newList,
+                    listDescription: e.target.value,
+                  })
+                }}
+              />
+              <Button type="submit">
+                <Icon
+                  id="newListStrapiButton"
+                  style={{
+                    fontSize: 50,
+                    margin: "0.5rem auto 0 auto",
+                    cursor: "pointer",
+                  }}
+                >
+                  add_circle
+                </Icon>
+              </Button>
+            </form>
+          </CardList>
           {/* **************** CUSTOM LISTS ADDED LOCALLY ******************** */}
           {customLists.map(({ _id, name, description, items }) => (
             <CardList elevation={3} key={_id}>
@@ -350,6 +456,7 @@ const Lists = () => {
                     add_circle
                   </Icon>
                 </AddItem>
+
                 <Divider style={{ marginBottom: "2rem" }} />
                 {items.map((item) => (
                   <div
@@ -394,13 +501,22 @@ const Lists = () => {
               </Box>
             </CardList>
           ))}
-
           {/* **************** LISTS FROM STRAPI ******************** */}
           {data.lists.map(
             ({ _id, name, description, items, users_permissions_user }) =>
               users_permissions_user._id === ID && (
                 <CardList elevation={3} key={_id}>
-                  <h2 style={{ marginBottom: "0.2rem" }}>{name}</h2>
+                  <Typography
+                    component="h2"
+                    style={{
+                      marginBottom: "0.5rem",
+                      textTransform: "uppercase",
+                      display: "flex",
+                      justifyContent: "center",
+                    }}
+                  >
+                    {name}
+                  </Typography>
                   <p style={{ marginBottom: "1rem", color: "gray" }}>
                     {description}
                   </p>

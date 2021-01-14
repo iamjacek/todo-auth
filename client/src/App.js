@@ -40,8 +40,6 @@ function App() {
 
   const handleSignout = () => {
     clearToken()
-    localStorage.removeItem("userID")
-    //just to not wait and do callback after state has been changed and immediately remove sign out button from navbar
     setAuthTokens(null)
     history.push("/")
   }
