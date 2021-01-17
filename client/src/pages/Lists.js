@@ -23,7 +23,7 @@ import { styled } from "@material-ui/core/styles"
 import { useQuery, useMutation, gql } from "@apollo/client"
 
 const LIST_DATA = gql`
-  query {
+  query pullList {
     lists {
       users_permissions_user {
         _id
@@ -154,16 +154,18 @@ const Lists = () => {
 
   const { authTokens } = useAuth()
   const ID = authTokens.user._id
-  const { loading, error, data } = useQuery(LIST_DATA)
+  const { loading, error, data, refetch } = useQuery(LIST_DATA)
 
   // MUTATION FUNCTIONS *******  ***********  ************  ********  ******  *****
 
+  //create list and refetch right after
   const [createList] = useMutation(CREATE_LIST, {
     variables: {
       name: newList.listName,
       description: newList.listDescription,
       user: ID,
     },
+    refetchQueries: [`pullList`],
   })
 
   const addNewList = () => {
