@@ -22,6 +22,8 @@ import { styled } from "@material-ui/core/styles"
 
 import { useQuery, useMutation, gql } from "@apollo/client"
 
+const apiUrl = process.env.API_URL || "http://localhost:1337/"
+
 const LIST_DATA = gql`
   query pullList {
     lists {
@@ -86,6 +88,16 @@ const DELETE_LIST = gql`
   }
 `
 
+const DELETE_ITEM = gql`
+  mutation DeleteItem($id: ID!) {
+    deleteItem(input: { where: { id: $id } }) {
+      item {
+        id
+      }
+    }
+  }
+`
+
 const CenterContainer = styled(Container)({
   display: "flex",
   flexDirection: "column",
@@ -129,7 +141,11 @@ const Lists = () => {
     listId: "",
   })
 
-  const [itemToDelete, setItemToDelete] = useState("")
+  const [listIdToClear, setlistIdToClear] = useState("")
+
+  const [itemIdToRemove, setItemToRemove] = useState("")
+
+  const [listToDelete, setListToDelete] = useState("")
 
   // function clicker(event) {
   //   console.log("enter")
@@ -161,7 +177,7 @@ const Lists = () => {
 
   const { authTokens } = useAuth()
   const ID = authTokens.user._id
-  const { loading, error, data } = useQuery(LIST_DATA)
+  const { loading, error, data, refetch } = useQuery(LIST_DATA)
 
   // MUTATION FUNCTIONS *******  ***********  ************  ********  ******  *****
 
@@ -174,24 +190,62 @@ const Lists = () => {
     refetchQueries: [`pullList`],
   })
 
-  const [deleteList] = useMutation(DELETE_LIST, {
+  const [deleteList, { loading: deleting, error: deleteError }] = useMutation(
+    DELETE_LIST,
+    {
+      variables: {
+        listId: listToDelete,
+      },
+      refetchQueries: [`pullList`],
+    }
+  )
+
+  const [deleteItem] = useMutation(DELETE_ITEM, {
     variables: {
-      listId: itemToDelete,
+      id: itemIdToRemove,
     },
     refetchQueries: [`pullList`],
   })
 
   useEffect(() => {
-    if (itemToDelete !== "") {
+    if (listIdToClear !== "") {
+      fetch(apiUrl + "lists/" + listIdToClear, {
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          items: [],
+        }),
+      })
+        .then((response) => response.json())
+        .then((data) => {
+          console.log(data)
+          refetch()
+        })
+        .catch(function (error) {
+          console.log(error)
+        })
+    }
+  }, [listIdToClear])
+
+  useEffect(() => {
+    if (listToDelete !== "") {
       deleteList()
     }
-  }, [itemToDelete])
+  }, [listToDelete])
 
   useEffect(() => {
     if (newItem.itemName !== "") {
       createItem()
     }
   }, [newItem])
+
+  useEffect(() => {
+    if (itemIdToRemove !== "") {
+      deleteItem()
+    }
+  }, [itemIdToRemove])
 
   const resetNewListInput = () => {
     setNewList({ listName: "", listDescription: "" })
@@ -208,7 +262,15 @@ const Lists = () => {
   })
 
   const handleDeleteList = (listToDeleteId) => {
-    setItemToDelete(listToDeleteId)
+    setListToDelete(listToDeleteId)
+  }
+
+  const handleDeleteSingleItem = (id) => {
+    setItemToRemove(id)
+  }
+
+  const handleClearList = (listToDeleteId) => {
+    setlistIdToClear(listToDeleteId)
   }
 
   if (loading)
@@ -348,12 +410,37 @@ const Lists = () => {
                           type="sumbmit"
                           onClick={(e) => {
                             //set state exactly for one clicked input
-                            setNewItem({
-                              itemName: e.target.parentNode.parentNode.previousSibling.getElementsByTagName(
+                            if (
+                              e.target.parentNode.parentNode.previousSibling.getElementsByTagName(
                                 "INPUT"
-                              )[0].value,
-                              listId: `${_id}`,
-                            })
+                              )[0] === null ||
+                              e.target.parentNode.parentNode.previousSibling.getElementsByTagName(
+                                "INPUT"
+                              )[0].value === null ||
+                              e.target.parentNode.parentNode.previousSibling.getElementsByTagName(
+                                "INPUT"
+                              )[0].value === undefined
+                            ) {
+                              setTimeout(() => {
+                                setNewItem({
+                                  itemName: e.target.parentNode.parentNode.previousSibling.getElementsByTagName(
+                                    "INPUT"
+                                  )[0].value,
+                                  listId: `${_id}`,
+                                })
+                              }, 300)
+                            } else {
+                              setNewItem({
+                                itemName: e.target.parentNode.parentNode.previousSibling.getElementsByTagName(
+                                  "INPUT"
+                                )[0].value,
+                                listId: `${_id}`,
+                              })
+                            }
+
+                            e.target.parentNode.parentNode.previousSibling.getElementsByTagName(
+                              "INPUT"
+                            )[0].value = ""
                           }}
                         >
                           <Icon
@@ -379,7 +466,7 @@ const Lists = () => {
                           <Chip
                             label={item.itemName}
                             // onClick={}
-                            // onDelete={}
+                            onDelete={() => handleDeleteSingleItem(item._id)}
                             color="default"
                             variant="outlined"
                             className={
@@ -403,7 +490,7 @@ const Lists = () => {
                   >
                     <Button
                       style={{ marginTop: "1rem" }}
-                      // onClick={}
+                      onClick={() => handleClearList(_id)}
                       disabled={items.length === 0}
                     >
                       CLEAR LIST
