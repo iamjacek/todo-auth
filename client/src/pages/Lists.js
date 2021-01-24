@@ -147,33 +147,33 @@ const Lists = () => {
 
   const [listToDelete, setListToDelete] = useState("")
 
-  // function clicker(event) {
-  //   console.log("enter")
-  //   if (event.keyCode === 13) {
-  //     //add list using enter keyboard key
-  //     const a = document.querySelector("#newListName")
-  //     const b = document.querySelector("#newListDesc")
-  //     if (document.activeElement === a || document.activeElement === b) {
-  //       document.getElementById("newListButton").click()
-  //     }
-  //     //add item using enter keyboard key
-  //     const c = document.querySelectorAll(".newItemName")
-  //     c.forEach((e) => {
-  //       if (e.getElementsByTagName("INPUT")[0] === document.activeElement) {
-  //         e.getElementsByTagName(
-  //           "INPUT"
-  //         )[0].parentNode.parentNode.nextSibling.click()
-  //       }
-  //     })
-  //   }
-  // }
+  //enter key may be used to create lists and items
+  function clicker(event) {
+    if (event.keyCode === 13) {
+      //add list using enter keyboard key
+      const a = document.querySelector("#newListStrapiName")
+      const b = document.querySelector("#newListStrapiDesc")
+      if (document.activeElement === a || document.activeElement === b) {
+        document.getElementById("newListStrapiButton").click()
+      }
 
-  // useEffect(() => {
-  //   window.addEventListener("keyup", clicker)
-  //   return () => {
-  //     window.removeEventListener("keyup", clicker)
-  //   }
-  // }, [])
+      const c = document.querySelectorAll(".newItemName")
+      c.forEach((e) => {
+        if (e.getElementsByTagName("INPUT")[0] === document.activeElement) {
+          e.getElementsByTagName(
+            "INPUT"
+          )[0].parentNode.parentNode.nextSibling.click()
+        }
+      })
+    }
+  }
+
+  useEffect(() => {
+    window.addEventListener("keyup", clicker)
+    return () => {
+      window.removeEventListener("keyup", clicker)
+    }
+  }, [])
 
   const { authTokens } = useAuth()
   const ID = authTokens.user._id
@@ -220,7 +220,6 @@ const Lists = () => {
       })
         .then((response) => response.json())
         .then((data) => {
-          console.log(data)
           refetch()
         })
         .catch(function (error) {
@@ -321,8 +320,10 @@ const Lists = () => {
             <form
               onSubmit={(e) => {
                 e.preventDefault()
-                createList()
-                resetNewListInput()
+                if (newList.listName !== "") {
+                  createList()
+                  resetNewListInput()
+                }
               }}
             >
               <TextField
@@ -350,9 +351,8 @@ const Lists = () => {
                   })
                 }}
               />
-              <Button type="submit">
+              <Button type="submit" id="newListStrapiButton">
                 <Icon
-                  id="newListStrapiButton"
                   style={{
                     fontSize: 50,
                     margin: "0.5rem auto 0 auto",
@@ -366,146 +366,166 @@ const Lists = () => {
           </CardList>
 
           {/* **************** LISTS FROM STRAPI ******************** */}
-          {data.lists.map(
-            ({ _id, name, description, items, users_permissions_user }) =>
-              users_permissions_user._id === ID && (
-                <CardList elevation={3} key={_id}>
-                  <Box flexGrow={1}>
-                    <Typography
-                      component="h2"
-                      style={{
-                        maxWidth: "200px",
-                        margin: "0 auto 0.5rem auto",
-                        textTransform: "uppercase",
-                        display: "flex",
-                        justifyContent: "center",
-                        textAlign: "center",
-                      }}
-                    >
-                      {name}
-                    </Typography>
-                    <p
-                      style={{
-                        margin: "0 auto 1rem auto",
-                        textAlign: "center",
-                        color: "gray",
-                        maxWidth: "200px",
-                      }}
-                    >
-                      {description}
-                    </p>
-                    <form
-                      onSubmit={(e) => {
-                        e.preventDefault()
-                      }}
-                    >
-                      <AddItem>
-                        <TextField
-                          label="New Item"
-                          variant="outlined"
-                          className="newItemName"
-                          value={this}
-                        />
-                        <Button
-                          type="sumbmit"
-                          onClick={(e) => {
-                            //set state exactly for one clicked input
-                            if (
-                              e.target.parentNode.parentNode.previousSibling.getElementsByTagName(
-                                "INPUT"
-                              )[0] === null ||
-                              e.target.parentNode.parentNode.previousSibling.getElementsByTagName(
-                                "INPUT"
-                              )[0].value === null ||
-                              e.target.parentNode.parentNode.previousSibling.getElementsByTagName(
-                                "INPUT"
-                              )[0].value === undefined
-                            ) {
-                              setTimeout(() => {
-                                setNewItem({
-                                  itemName: e.target.parentNode.parentNode.previousSibling.getElementsByTagName(
-                                    "INPUT"
-                                  )[0].value,
-                                  listId: `${_id}`,
-                                })
-                              }, 300)
-                            } else {
-                              setNewItem({
-                                itemName: e.target.parentNode.parentNode.previousSibling.getElementsByTagName(
-                                  "INPUT"
-                                )[0].value,
-                                listId: `${_id}`,
-                              })
-                            }
+          {data.lists &&
+            data.lists.map(
+              ({ _id, name, description, items, users_permissions_user }) =>
+                users_permissions_user._id === ID && (
+                  <CardList elevation={3} key={_id}>
+                    <Box flexGrow={1}>
+                      <Typography
+                        component="h2"
+                        style={{
+                          maxWidth: "200px",
+                          margin: "0 auto 0.5rem auto",
+                          textTransform: "uppercase",
+                          display: "flex",
+                          justifyContent: "center",
+                          textAlign: "center",
+                        }}
+                      >
+                        {name}
+                      </Typography>
+                      <p
+                        style={{
+                          margin: "0 auto 1rem auto",
+                          textAlign: "center",
+                          color: "gray",
+                          maxWidth: "200px",
+                        }}
+                      >
+                        {description}
+                      </p>
+                      <form
+                        onSubmit={(e) => {
+                          e.preventDefault()
+                        }}
+                      >
+                        <AddItem>
+                          <TextField
+                            label="New Item"
+                            variant="outlined"
+                            className="newItemName"
+                            value={this}
+                          />
+                          <Button
+                            type="sumbmit"
+                            onClick={(e) => {
+                              //set state exactly for one clicked input
 
-                            e.target.parentNode.parentNode.previousSibling.getElementsByTagName(
-                              "INPUT"
-                            )[0].value = ""
-                          }}
-                        >
-                          <Icon
-                            className="newItemButton"
-                            style={{
-                              fontSize: 30,
-                              margin: "auto",
-                              cursor: "pointer",
+                              //user click on plus icon
+                              if (e.target.tagName.toLowerCase() == "span") {
+                                if (
+                                  e.target.parentNode.parentNode.previousSibling.getElementsByTagName(
+                                    "INPUT"
+                                  )[0].value !== null ||
+                                  e.target.parentNode.parentNode.previousSibling.getElementsByTagName(
+                                    "INPUT"
+                                  )[0].value !== undefined
+                                ) {
+                                  setNewItem({
+                                    itemName: e.target.parentNode.parentNode.previousSibling.getElementsByTagName(
+                                      "INPUT"
+                                    )[0].value,
+                                    listId: `${_id}`,
+                                  })
+                                } else {
+                                  console.log("no value has been submitted")
+                                }
+                                e.target.parentNode.parentNode.previousSibling.getElementsByTagName(
+                                  "INPUT"
+                                )[0].value = ""
+                              }
+                              if (e.target.tagName.toLowerCase() == "button") {
+                                if (
+                                  e.target.parentNode.getElementsByTagName(
+                                    "INPUT"
+                                  )[0].value !== null ||
+                                  e.target.parentNode.getElementsByTagName(
+                                    "INPUT"
+                                  )[0].value !== undefined
+                                ) {
+                                  setNewItem({
+                                    itemName: e.target.parentNode.getElementsByTagName(
+                                      "INPUT"
+                                    )[0].value,
+                                    listId: `${_id}`,
+                                  })
+                                } else {
+                                  console.log("no value has been submitted")
+                                }
+
+                                e.target.parentNode.getElementsByTagName(
+                                  "INPUT"
+                                )[0].value = ""
+                              }
                             }}
                           >
-                            add_circle
-                          </Icon>
-                        </Button>
-                      </AddItem>
-                    </form>
-                    <Divider style={{ marginBottom: "2rem" }} />
-                    {items.map((item) => (
-                      <div
-                        key={item._id}
-                        style={{ margin: "0.5rem 0", display: "block" }}
+                            <Icon
+                              className="newItemButton"
+                              style={{
+                                fontSize: 30,
+                                margin: "auto",
+                                cursor: "pointer",
+                              }}
+                            >
+                              add_circle
+                            </Icon>
+                          </Button>
+                        </AddItem>
+                      </form>
+                      <Divider style={{ marginBottom: "2rem" }} />
+                      {items.map((item) => (
+                        <div
+                          key={item._id}
+                          style={{ margin: "0.5rem 0", display: "block" }}
+                        >
+                          <Tooltip title={item.description || ""}>
+                            <Chip
+                              label={item.itemName}
+                              // onClick={}
+                              onDelete={() => handleDeleteSingleItem(item._id)}
+                              color="default"
+                              variant="outlined"
+                              className={
+                                item.checked
+                                  ? "list__item--clicked"
+                                  : "list__item"
+                              }
+                            />
+                          </Tooltip>
+                        </div>
+                      ))}
+
+                      {items.length === 0 && (
+                        <Box display="flex" justifyContent="center">
+                          This list is empty
+                        </Box>
+                      )}
+                    </Box>
+                    <Box
+                      style={{
+                        display: "flex",
+                        justifyContent: "space-between",
+                      }}
+                    >
+                      <Button
+                        style={{ marginTop: "1rem" }}
+                        onClick={() => handleClearList(_id)}
+                        disabled={items.length === 0}
                       >
-                        <Tooltip title={item.description || ""}>
-                          <Chip
-                            label={item.itemName}
-                            // onClick={}
-                            onDelete={() => handleDeleteSingleItem(item._id)}
-                            color="default"
-                            variant="outlined"
-                            className={
-                              item.checked
-                                ? "list__item--clicked"
-                                : "list__item"
-                            }
-                          />
-                        </Tooltip>
-                      </div>
-                    ))}
+                        CLEAR LIST
+                      </Button>
 
-                    {items.length === 0 && (
-                      <Box display="flex" justifyContent="center">
-                        This list is empty
-                      </Box>
-                    )}
-                  </Box>
-                  <Box
-                    style={{ display: "flex", justifyContent: "space-between" }}
-                  >
-                    <Button
-                      style={{ marginTop: "1rem" }}
-                      onClick={() => handleClearList(_id)}
-                      disabled={items.length === 0}
-                    >
-                      CLEAR LIST
-                    </Button>
-
-                    <Button
-                      style={{ marginTop: "1rem", marginLeft: "auto" }}
-                      onClick={() => handleDeleteList(_id)}
-                    >
-                      REMOVE LIST
-                    </Button>
-                  </Box>
-                </CardList>
-              )
-          )}
+                      <Button
+                        style={{ marginTop: "1rem", marginLeft: "auto" }}
+                        onClick={() => handleDeleteList(_id)}
+                      >
+                        REMOVE LIST
+                      </Button>
+                    </Box>
+                  </CardList>
+                )
+            )}
         </CardWrapper>
       </CenterContainer>
     </Wrapper>
