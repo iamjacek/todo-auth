@@ -98,6 +98,18 @@ const DELETE_ITEM = gql`
   }
 `
 
+const UPDATE_ITEM = gql`
+  mutation UpdateItem($itemId: ID!, $isChecked: Boolean) {
+    updateItem(
+      input: { where: { id: $itemId }, data: { checked: $isChecked } }
+    ) {
+      item {
+        checked
+      }
+    }
+  }
+`
+
 const CenterContainer = styled(Container)({
   display: "flex",
   flexDirection: "column",
@@ -147,6 +159,11 @@ const Lists = () => {
 
   const [listToDelete, setListToDelete] = useState("")
 
+  const [checkItem, setCheckItem] = useState({
+    id: "",
+    checked: "",
+  })
+
   //enter key may be used to create lists and items
   function clicker(event) {
     if (event.keyCode === 13) {
@@ -190,11 +207,19 @@ const Lists = () => {
     refetchQueries: [`pullList`],
   })
 
-  const [deleteList, { loading: deleting, error: deleteError }] = useMutation(
-    DELETE_LIST,
+  const [deleteList] = useMutation(DELETE_LIST, {
+    variables: {
+      listId: listToDelete,
+    },
+    refetchQueries: [`pullList`],
+  })
+
+  const [updateItem, { loading: updating, error: updateError }] = useMutation(
+    UPDATE_ITEM,
     {
       variables: {
-        listId: listToDelete,
+        itemId: checkItem.id,
+        isChecked: checkItem.checked,
       },
       refetchQueries: [`pullList`],
     }
@@ -241,6 +266,12 @@ const Lists = () => {
   }, [newItem])
 
   useEffect(() => {
+    if (checkItem.id !== "") {
+      updateItem()
+    }
+  }, [checkItem])
+
+  useEffect(() => {
     if (itemIdToRemove !== "") {
       deleteItem()
     }
@@ -270,6 +301,13 @@ const Lists = () => {
 
   const handleClearList = (listToDeleteId) => {
     setlistIdToClear(listToDeleteId)
+  }
+
+  const handleItemClick = (itemId, checked) => {
+    setCheckItem({
+      id: itemId,
+      checked: !checked,
+    })
   }
 
   if (loading)
@@ -482,7 +520,9 @@ const Lists = () => {
                           <Tooltip title={item.description || ""}>
                             <Chip
                               label={item.itemName}
-                              // onClick={}
+                              onClick={() =>
+                                handleItemClick(item._id, item.checked)
+                              }
                               onDelete={() => handleDeleteSingleItem(item._id)}
                               color="default"
                               variant="outlined"
