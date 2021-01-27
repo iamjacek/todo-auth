@@ -127,6 +127,7 @@ const CardWrapper = styled(Box)({
 })
 
 const CardList = styled(Card)({
+  position: "relative",
   minWidth: "200px",
   maxWidth: "350px",
   margin: "1rem 0.5rem",
@@ -139,6 +140,12 @@ const AddItem = styled(Box)({
   display: "flex",
   flexDirection: "row",
   marginBottom: "2rem",
+})
+
+const AbsoluteLoadingBox = styled(Box)({
+  position: "absolute",
+  left: "50%",
+  zIndex: "5",
 })
 
 const Lists = () => {
@@ -162,6 +169,7 @@ const Lists = () => {
   const [checkItem, setCheckItem] = useState({
     id: "",
     checked: "",
+    listId: "",
   })
 
   //enter key may be used to create lists and items
@@ -173,7 +181,7 @@ const Lists = () => {
       if (document.activeElement === a || document.activeElement === b) {
         document.getElementById("newListStrapiButton").click()
       }
-
+      //add item
       const c = document.querySelectorAll(".newItemName")
       c.forEach((e) => {
         if (e.getElementsByTagName("INPUT")[0] === document.activeElement) {
@@ -303,10 +311,11 @@ const Lists = () => {
     setlistIdToClear(listToDeleteId)
   }
 
-  const handleItemClick = (itemId, checked) => {
+  const handleItemClick = (itemId, checked, listId) => {
     setCheckItem({
       id: itemId,
       checked: !checked,
+      listId: listId,
     })
   }
 
@@ -451,7 +460,7 @@ const Lists = () => {
                               //set state exactly for one clicked input
 
                               //user click on plus icon
-                              if (e.target.tagName.toLowerCase() == "span") {
+                              if (e.target.tagName.toLowerCase() === "span") {
                                 if (
                                   e.target.parentNode.parentNode.previousSibling.getElementsByTagName(
                                     "INPUT"
@@ -473,7 +482,7 @@ const Lists = () => {
                                   "INPUT"
                                 )[0].value = ""
                               }
-                              if (e.target.tagName.toLowerCase() == "button") {
+                              if (e.target.tagName.toLowerCase() === "button") {
                                 if (
                                   e.target.parentNode.getElementsByTagName(
                                     "INPUT"
@@ -512,6 +521,16 @@ const Lists = () => {
                         </AddItem>
                       </form>
                       <Divider style={{ marginBottom: "2rem" }} />
+                      {updating && _id === checkItem.listId && (
+                        <AbsoluteLoadingBox>
+                          <CircularProgress
+                            style={{
+                              position: "relative",
+                              left: "-50%",
+                            }}
+                          />
+                        </AbsoluteLoadingBox>
+                      )}
                       {items.map((item) => (
                         <div
                           key={item._id}
@@ -521,7 +540,7 @@ const Lists = () => {
                             <Chip
                               label={item.itemName}
                               onClick={() =>
-                                handleItemClick(item._id, item.checked)
+                                handleItemClick(item._id, item.checked, _id)
                               }
                               onDelete={() => handleDeleteSingleItem(item._id)}
                               color="default"
