@@ -259,30 +259,35 @@ const Lists = () => {
           console.log(error)
         })
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [listIdToClear])
 
   useEffect(() => {
     if (listToDelete !== "") {
       deleteList()
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [listToDelete])
 
   useEffect(() => {
     if (newItem.itemName !== "") {
       createItem()
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [newItem])
 
   useEffect(() => {
     if (checkItem.id !== "") {
       updateItem()
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [checkItem])
 
   useEffect(() => {
     if (itemIdToRemove !== "") {
       deleteItem()
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [itemIdToRemove])
 
   const resetNewListInput = () => {
