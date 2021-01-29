@@ -521,6 +521,7 @@ const Lists = () => {
                         </AddItem>
                       </form>
                       <Divider style={{ marginBottom: "2rem" }} />
+                      {updateError && console.log(updateError)}
                       {updating && _id === checkItem.listId && (
                         <AbsoluteLoadingBox>
                           <CircularProgress
