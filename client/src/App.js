@@ -16,7 +16,8 @@ import { createBrowserHistory } from "history"
 
 import { ApolloProvider } from "@apollo/client"
 import { ApolloClient, InMemoryCache } from "@apollo/client"
-const apiUrl = process.env.API_URL || "http://localhost:1337/graphql"
+const apiUrl =
+  process.env.API_URL + "graphql" || "http://localhost:1337/graphql"
 let history = createBrowserHistory()
 const client = new ApolloClient({
   uri: apiUrl,
