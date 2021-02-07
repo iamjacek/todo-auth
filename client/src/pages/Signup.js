@@ -45,7 +45,7 @@ const Signup = (props) => {
       return
     }
     axios
-      .post("http://localhost:1337/auth/local/register", {
+      .post("https://todo001-001.herokuapp.com/auth/local/register", {
         username: userName,
         email: userEmail,
         password: password,

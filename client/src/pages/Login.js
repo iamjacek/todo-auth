@@ -38,7 +38,7 @@ const Login = (props) => {
   const postLogin = (event) => {
     event.preventDefault()
     axios
-      .post("http://localhost:1337/auth/local", {
+      .post("https://todo001-001.herokuapp.com/auth/local", {
         identifier: userEmail,
         password: password,
       })
