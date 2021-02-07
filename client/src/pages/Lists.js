@@ -22,7 +22,7 @@ import { styled } from "@material-ui/core/styles"
 
 import { useQuery, useMutation, gql } from "@apollo/client"
 
-const apiUrl = process.env.API_URL || "http://localhost:1337/"
+const apiUrl = "https://todo001-001.herokuapp.com/"
 
 const LIST_DATA = gql`
   query pullList {
