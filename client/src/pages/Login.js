@@ -64,7 +64,6 @@ const Login = (props) => {
           <TextField
             label="Name or Email"
             variant="filled"
-            type="email"
             onChange={(e) => {
               setEmail(e.target.value)
             }}
